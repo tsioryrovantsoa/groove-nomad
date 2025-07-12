@@ -40,6 +40,7 @@ for page_num in range(1, 16):
                     "location": clean_html_entities(data.get("location", {}).get("name")),
                     "city": clean_html_entities(data.get("location", {}).get("address", {}).get("addressLocality")),
                     "region": clean_html_entities(data.get("location", {}).get("address", {}).get("addressRegion")),
+                    "page": page_num,
                 })
         except json.JSONDecodeError:
             continue

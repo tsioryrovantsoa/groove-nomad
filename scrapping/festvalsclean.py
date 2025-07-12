@@ -1,45 +1,67 @@
 import pandas as pd
-from datetime import datetime
+from region_mappings import abbr_to_region
+from city_to_region import city_to_region
 
-# Charger le fichier CSV
-csv_file = "data/festivals.csv"
-df = pd.read_csv(csv_file)
+# --- 1. Chargement du CSV
+df = pd.read_csv("data/festivals.csv")
 
-df["region"] = df["region"].astype(str).str.strip()
+# --- 2. Formatage des dates
+df["startDate"] = pd.to_datetime(df["startDate"]).dt.strftime("%Y-%m-%d")
+df["endDate"] = pd.to_datetime(df["endDate"]).dt.strftime("%Y-%m-%d")
+
+# --- 3. description_fr juste après description
+df.insert(df.columns.get_loc("description") + 1, "description_fr", "")
+
+# --- 4. Initialiser la colonne region_abbr
+df["region_abbr"] = ""
 
 
-print((df["region"].unique()))
+# --- Compléter les régions vides depuis la ville
+def fill_region_from_city(row):
+    city = str(row["city"]).strip()  # nettoyage
+    print(f"Vérification de la ville: {city}")
+    print(f"Région actuelle: {row['region']}")
+    if pd.isna(row["region"]) and city in city_to_region:
+        region_found = city_to_region[city]
+        print(f"Remplissage de la région depuis la ville: {row['city']} -> {region_found}")
+        return region_found
+    return row["region"]
+
+df["region"] = df.apply(fill_region_from_city, axis=1)
+
+# --- 5. Déplacement des régions abrégées vers region_abbr (en MAJ)
+def handle_region(value):
+    if isinstance(value, str) and len(value.strip()) == 2:
+        print(f"Déplacement de la région abrégée: {value.strip().upper()}")
+        return pd.Series(
+            ["", value.strip().upper()]
+        )  # déplacer vers abbr, mettre region vide
+    else:
+        print(f"Aucune région abrégée trouvée pour: {value}")
+        return pd.Series([value, ""])  # laisser region, region_abbr vide
 
 
-# ✅ Conversion des dates
-def clean_date(date_str):
-    try:
-        # Cas où il y a déjà des jours et mois écrits comme "Jul 12 2025"
-        dt = datetime.strptime(date_str.strip(), "%b %d %Y")
-        return dt.strftime("%Y-%m-%d")
-    except:
-        return date_str  # En cas d'erreur, on laisse tel quel
+df[["region", "region_abbr"]] = df["region"].apply(handle_region)
 
-df["startDate"] = df["startDate"].apply(clean_date)
-df["endDate"] = df["endDate"].apply(clean_date)
 
-region_mapping = {
-    "AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas", "CO": "Colorado",
-    "CT": "Connecticut", "CA": "California", "DE": "Delaware", "GA": "Georgia", "HI": "Hawaii",
-    "ID": "Idaho", "IN": "Indiana", "IA": "Iowa", "KS": "Kansas", "KY": "Kentucky",
-    "LA": "Louisiana", "ME": "Maine", "MD": "Maryland", "MA": "Massachusetts", "MI": "Michigan",
-    "MS": "Mississippi", "MO": "Missouri", "MT": "Montana", "NE": "Nebraska", "NV": "Nevada",
-    "NH": "New Hampshire", "NJ": "New Jersey", "NM": "New Mexico", "ND": "North Dakota",
-    "OH": "Ohio", "OK": "Oklahoma", "NY": "New York", "PA": "Pennsylvania", "RI": "Rhode Island",
-    "SC": "South Carolina", "TN": "Tennessee", "TX": "Texas", "FL": "Florida", "IL": "Illinois",
-    "UK": "United Kingdom", "UT": "Utah", "VA": "Virginia", "WV": "West Virginia", "WI": "Wisconsin",
-    "WY": "Wyoming", "NC": "North Carolina", "SD": "South Dakota", "VT": "Vermont", "WA": "Washington",
-    "AB": "Alberta", "MN": "Minnesota", "OR": "Oregon", "FRANCE": "France", "BELGIUM": "Belgium",
-    "SWITZERLAND": "Switzerland"
-}
+def fill_region(row):
+    if row["region"] == "" and row["region_abbr"] in abbr_to_region:
+        return abbr_to_region[row["region_abbr"]]
+    return row["region"]
 
-df["region"] = df["region"].apply(lambda x: region_mapping.get(str(x).strip(), x))
 
-# ✅ Sauvegarde du fichier nettoyé
-#df.to_csv("data/festivals_cleaned.csv", index=False, encoding="utf-8")
-print("✅ Fichier nettoyé sauvegardé sous 'data/festivals_cleaned.csv'")
+df["region"] = df.apply(fill_region, axis=1)
+
+# --- 1. Inverser le mapping : nom complet → abréviation
+region_to_abbr = {v: k for k, v in abbr_to_region.items()}
+
+# --- 2. Remplir region_abbr à partir de region
+def fill_region_abbr(row):
+    if (pd.isna(row["region_abbr"]) or row["region_abbr"] == "") and row["region"] in region_to_abbr:
+        return region_to_abbr[row["region"]]
+    return row["region_abbr"]
+
+df["region_abbr"] = df.apply(fill_region_abbr, axis=1)
+
+# --- 6. Export
+df.to_csv("data/festivals_formatted.csv", index=False)
