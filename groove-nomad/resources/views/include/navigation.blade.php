@@ -1,0 +1,32 @@
+    <header class="header {{ request()->routeIs('home') ? 'header' : 'header--normal' }}">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-2 col-md-2">
+                    <div class="header__logo">
+                        <a href="{{ route('home') }}"><img src="{{ asset('img/logo.png') }}" alt=""
+                                width="60" /></a>
+                    </div>
+                </div>
+                <div class="col-lg-10 col-md-10">
+                    <div class="header__nav">
+                        <nav class="header__menu mobile-menu">
+                            <ul>
+                                <li class="{{ request()->routeIs('home') ? 'active' : '' }}">
+                                    <a href="{{ route('home') }}">Accueil</a>
+                                </li>
+                                <li class="{{ request()->routeIs('auth.*') ? 'active' : '' }}">
+                                    <a href="{{ route('auth.login') }}">Connexion</a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <div class="header__right__social">
+                            <a href="#"><i class="fa fa-facebook"></i></a>
+                            <a href="#"><i class="fa fa-twitter"></i></a>
+                            <a href="#"><i class="fa fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="mobile-menu-wrap"></div>
+        </div>
+    </header>
