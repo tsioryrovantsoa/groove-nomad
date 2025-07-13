@@ -68,8 +68,16 @@ abbr_to_region = {
     "CY": "Cyprus",
     "SK": "Slovakia",
     "LV": "Latvia",
-    "LU": "Riga",
-    "BIH": "Bosnia",
+    "LU": "Lucavsala",
+    "BIH": "BiH",  # Bosnia abbreviation alternative
     "MK": "Macedonia",
-    "MAN": "Manitoba"
+    "MAN": "Manitoba",
+    "FO": "Faroe Islands",
+    "NO": "Norway",
+    "WL": "Wales",
+    "OS": "Osaka",
+    "IT": "Italy",
+    "EE": "Estonia",
+    "BG": "Bulgaria",
+    "LT": "Lithuania"
 }

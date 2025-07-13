@@ -1,6 +1,7 @@
 import pandas as pd
 from region_mappings import abbr_to_region
 from city_to_region import city_to_region
+import unicodedata
 
 # --- 1. Chargement du CSV
 df = pd.read_csv("data/festivals.csv")
@@ -33,6 +34,14 @@ def handle_region(value):
 
 df[["region", "region_abbr"]] = df["region"].apply(handle_region)
 
+def remove_accents(text):
+    if not isinstance(text, str):
+        return ""
+    return unicodedata.normalize("NFKD", text).encode("ASCII", "ignore").decode("utf-8")
+
+# Appliquer à la colonne 'region'
+df["region"] = df["region"].apply(remove_accents)
+
 # --- 7. Compléter region depuis region_abbr (si encore vide)
 def fill_region(row):
     if (pd.isna(row["region"]) or row["region"] == "") and row["region_abbr"] in abbr_to_region:
@@ -42,7 +51,8 @@ def fill_region(row):
 df["region"] = df.apply(fill_region, axis=1)
 
 # --- 8. Compléter region_abbr à partir de region (dernier fallback)
-region_to_abbr = {v: k for k, v in abbr_to_region.items()}
+region_to_abbr = {v.strip(): k for k, v in abbr_to_region.items()}
+print(f"Régions disponibles: {list(region_to_abbr.keys())}")
 
 # Assurer que region_abbr est une chaîne de caractères
 df["region_abbr"] = df["region_abbr"].fillna("").astype(str).str.strip()
@@ -50,13 +60,51 @@ df["region"] = df["region"].fillna("").astype(str).str.strip()
 df["city"] = df["city"].fillna("").astype(str).str.strip()
 
 def fill_region_abbr(row):
-    print(f"Traitement de la ligne : {row['region']}, abréviation actuelle : {row['region_abbr']}")
-    if (pd.isna(row["region_abbr"]) or row["region_abbr"] == "") and row["region"] in region_to_abbr:
-        print(f"Région '{row['region']}' convertie en abréviation '{region_to_abbr[row['region']]}'")
-        return region_to_abbr[row["region"]]
-    return row["region_abbr"]
+    region = str(row["region"]).strip()
+    abbr = str(row["region_abbr"]).strip()
+
+    print(f"\n--- Vérification de la ligne ---")
+    print(f"Region: '{region}'")
+    print(f"Region Abbr: '{abbr}'")
+
+    is_abbr_nan = pd.isna(row["region_abbr"])
+    is_abbr_empty = abbr == ""
+    is_abbr_space = abbr == " "
+    is_region_mappable = region in region_to_abbr
+
+    print(f"-> pd.isna(region_abbr): {is_abbr_nan}")
+    print(f"-> region_abbr == '': {is_abbr_empty}")
+    print(f"-> region_abbr == ' ': {is_abbr_space}")
+    print(f"-> region in region_to_abbr: {is_region_mappable}")
+
+    if (is_abbr_nan or is_abbr_empty or is_abbr_space) and is_region_mappable:
+        print(f"✅ Remplissage: '{region}' => '{region_to_abbr[region]}'")
+        return region_to_abbr[region]
+
+    print("❌ Pas de remplissage.")
+    return abbr
 
 df["region_abbr"] = df.apply(fill_region_abbr, axis=1)
+
+# --- 8bis. Correction des types de données
+
+# Colonnes à forcer en texte (string)
+text_columns = [
+    "name", "url", "image", "description", "description_fr",
+    "location", "city", "region", "region_abbr"
+]
+for col in text_columns:
+    df[col] = df[col].fillna("").astype(str).str.strip()
+
+# Convertir les dates en datetime (coerce les erreurs éventuelles)
+df["startDate"] = pd.to_datetime(df["startDate"], errors="coerce")
+df["endDate"] = pd.to_datetime(df["endDate"], errors="coerce")
+
+# Convertir 'page' s'il existe en entier nullable
+if "page" in df.columns:
+    df["page"] = pd.to_numeric(df["page"], errors="coerce").astype("Int64")
+
+print(df.dtypes)
 
 # --- 9. Export final
 df.to_csv("data/festivals_formatted.csv", index=False)
