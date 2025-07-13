@@ -33,7 +33,7 @@
             <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
 
             <div class="text-center mt-3">
-                <a href="#">Pas de compte ? S'inscrire</a>
+                <a href="{{ route('auth.register') }}">Pas de compte ? S'inscrire</a>
             </div>
         </form>
     </div>
