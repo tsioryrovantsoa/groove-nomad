@@ -34,16 +34,29 @@
                 </div>
                 <div class="form-group col-md-6">
                     <label for="passeport">Pays du passeport</label>
-                    <input type="text" class="form-control" id="passeport" name="passeport"
-                        value="{{ old('passeport') }}" required>
+                    <select class="form-control" id="passeport" name="passeport" required>
+                        <option value="">-- Sélectionner --</option>
+                        @foreach ($countries as $country)
+                            <option value="{{ $country->iso2 }}" {{ old('passeport') == $country->iso2 ? 'selected' : '' }}>
+                                {{ $country->name }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="nationalite">Nationalité</label>
-                    <input type="text" class="form-control" id="nationalite" name="nationalite"
-                        value="{{ old('nationalite') }}" required>
+                    <select class="form-control" id="nationalite" name="nationalite" required>
+                        <option value="">-- Sélectionner --</option>
+                        @foreach ($countries as $country)
+                            <option value="{{ $country->iso2 }}"
+                                {{ old('nationalite') == $country->iso2 ? 'selected' : '' }}>
+                                {{ $country->name }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="form-group col-md-6">
                     <label for="telephone">Numéro de téléphone</label>
