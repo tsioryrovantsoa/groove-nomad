@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Models\MusicGenre;
+use App\Services\GoogleSheetReader;
 use Illuminate\Console\Command;
 use Google\Client;
 use Google\Service\Sheets;
@@ -26,43 +28,20 @@ class FetchGoogleSheetData extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(GoogleSheetReader $sheetReader)
     {
-        // $sheetTitle = $this->argument('sheet');
-        $sheetTitle = 'Allergie';
+        $sheetTitle = 'Genre';
+        $spreadsheetId = '1Ld-z3WUBVcqKEHmplQJjj8dMqgEvuH-eRhsP7E8b8VY';
 
-        $this->info("Lecture des données de la feuille : $sheetTitle");
+        $rows = $sheetReader->getSheetData($spreadsheetId, $sheetTitle);
 
-        // Configure Google Client
-        $client = new Client();
-        $client->setApplicationName('Laravel Google Sheets App');
-        $client->setScopes([Sheets::SPREADSHEETS_READONLY]);
-        $client->setAuthConfig(storage_path('app/google/credentials.json'));
-        $client->setAccessType('offline');
+        if ($rows) {
+            $name = trim($row[0] ?? '');
+            dd($name);
 
-        $service = new Sheets($client);
-
-        // ID de ta Google Sheet (à modifier avec le tien)
-        $spreadsheetId = '1Ld-z3WUBVcqKEHmplQJjj8dMqgEvuH-eRhsP7E8b8VY'; // <-- Remplace ici
-
-        // Formater le nom de la feuille (avec quotes si nécessaire)
-        $range = "'$sheetTitle'";  // Toutes les données de la feuille
-
-        try {
-            $response = $service->spreadsheets_values->get($spreadsheetId, $range);
-            $values = $response->getValues();
-
-            if (empty($values)) {
-                $this->warn("Aucune donnée trouvée dans la feuille : $sheetTitle");
-                return;
+            if ($name !== '') {
+                MusicGenre::firstOrCreate(['name' => $name]);
             }
-
-            $this->info("Données récupérées :");
-            foreach ($values as $row) {
-                $this->line(implode(' | ', $row));
-            }
-        } catch (\Exception $e) {
-            $this->error("Erreur : " . $e->getMessage());
         }
     }
 }
