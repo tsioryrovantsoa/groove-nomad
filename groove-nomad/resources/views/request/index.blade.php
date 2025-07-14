@@ -13,13 +13,13 @@
                     {{-- Genres musicaux préférés --}}
                     <h5 class="mt-4 mb-2 border-bottom pb-2">🎶 Genres musicaux préférés</h5>
                     <div class="form-row">
-                        @foreach (['Rock', 'Électro', 'Hip-hop', 'Jazz', 'Pop', 'World', 'Autre'] as $genre)
+                        @foreach ($genres as $genre)
                             <div class="form-group col-md-6">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="genres[]"
-                                        id="genre_{{ Str::slug($genre) }}" value="{{ $genre }}">
+                                        id="genre_{{ Str::slug($genre->name) }}" value="{{ $genre->name }}">
                                     <label class="form-check-label"
-                                        for="genre_{{ Str::slug($genre) }}">{{ $genre }}</label>
+                                        for="genre_{{ Str::slug($genre->name) }}">{{ $genre->name }}</label>
                                 </div>
                             </div>
                         @endforeach
@@ -53,12 +53,9 @@
                         <label for="region">Région du monde souhaitée</label>
                         <select name="region" id="region" class="form-control">
                             <option value="">-- Choisir --</option>
-                            <option>Europe</option>
-                            <option>Amérique du Nord</option>
-                            <option>Amérique du Sud</option>
-                            <option>Asie</option>
-                            <option>Afrique</option>
-                            <option>Océanie</option>
+                            @foreach ($regions as $region)
+                                <option value="{{ $region->region }}">{{ $region->region }}</option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -86,13 +83,13 @@
                     {{-- 🎨 Goûts culturels --}}
                     <h5 class="mt-4 mb-3 border-bottom pb-2">🎨 Goûts culturels</h5>
                     <div class="form-row">
-                        @foreach (['Cosmopolitisme esthético-culturel', 'Road trips et aventure', 'Arts visuels et street art', 'Lifestyle côtier et beach culture', 'Arts et artisanat contemporains', 'Gaming et esports', 'Technologie et innovation', 'Culture urbaine et street art', 'Écotourisme et conservation', 'Multiculturalisme urbain'] as $interet)
+                        @foreach ($culturalTastes as $interet)
                             <div class="form-group col-md-6">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="interets[]"
-                                        id="{{ Str::slug($interet) }}" value="{{ $interet }}">
+                                        id="{{ Str::slug($interet->name) }}" value="{{ $interet->name }}">
                                     <label class="form-check-label"
-                                        for="{{ Str::slug($interet) }}">{{ $interet }}</label>
+                                        for="{{ Str::slug($interet->name) }}">{{ $interet->name }}</label>
                                 </div>
                             </div>
                         @endforeach
@@ -105,13 +102,13 @@
                     </h5>
                     <div class="collapse" id="phobiesCollapse">
                         <div class="form-row">
-                            @foreach (['Agoraphobie', 'Ochlophobie', 'Aviophobie', 'Amaxophobie', 'Diderodromophobie / Sidérodromophobie', 'Nyctophobie / Achluophobie', 'Sociophobie / Anthropophobie', 'Acrophobie / Altophobie', 'Ombrophobie', 'Domophobie / Ecophobie'] as $phobie)
+                            @foreach ($phobias as $phobie)
                                 <div class="form-group col-md-6">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="phobies[]"
-                                            id="{{ Str::slug($phobie) }}" value="{{ $phobie }}">
+                                            id="{{ Str::slug($phobie->name) }}" value="{{ $phobie->description }}">
                                         <label class="form-check-label"
-                                            for="{{ Str::slug($phobie) }}">{{ $phobie }}</label>
+                                            for="{{ Str::slug($phobie->name) }}">{{ $phobie->description }}</label>
                                     </div>
                                 </div>
                             @endforeach
@@ -125,13 +122,13 @@
                     </h5>
                     <div class="collapse" id="allergiesCollapse">
                         <div class="form-row">
-                            @foreach (['Allergies respiratoires', 'Allergies alimentaires', 'Allergies médicamenteuses', 'Allergies de contact (cutanées)', 'Allergies aux venins et piqûres', 'Réactions physiques et photoallergies', 'Allergies professionnelles (occupationales)', 'Allergies aux poils et squames d’animaux'] as $allergie)
+                            @foreach ($allergies as $allergie)
                                 <div class="form-group col-md-6">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="allergies[]"
-                                            id="{{ Str::slug($allergie) }}" value="{{ $allergie }}">
+                                            id="{{ Str::slug($allergie) }}" value="{{ $allergie->name }}">
                                         <label class="form-check-label"
-                                            for="{{ Str::slug($allergie) }}">{{ $allergie }}</label>
+                                            for="{{ Str::slug($allergie) }}">{{ $allergie->name }}</label>
                                     </div>
                                 </div>
                             @endforeach
