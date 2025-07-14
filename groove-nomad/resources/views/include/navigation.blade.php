@@ -17,6 +17,9 @@
                                 <li class="{{ request()->routeIs(patterns: 'festival.*') ? 'active' : '' }}">
                                     <a href="{{ route('festival.index') }}">Festival</a>
                                 </li>
+                                <li class="{{ request()->routeIs('request.*') ? 'active' : '' }}">
+                                    <a href="{{ route('request.index') }}">Devis</a>
+                                </li>
                                 @guest
                                     <li class="{{ request()->routeIs('auth.*') ? 'active' : '' }}">
                                         <a href="{{ route('auth.login') }}">Connexion</a>
@@ -33,6 +36,7 @@
                                             </button>
                                         </form>
                                     </li>
+
                                 @endauth
                             </ul>
                         </nav>

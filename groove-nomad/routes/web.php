@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FestivalController;
+use App\Http\Controllers\RequestController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -15,3 +16,6 @@ Route::post('/register', [AuthController::class, 'doregister'])->name('auth.regi
 Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
 Route::get('/festival', [FestivalController::class, 'index'])->name('festival.index');
+
+
+Route::get('/request', [RequestController::class, 'index'])->name('request.index');

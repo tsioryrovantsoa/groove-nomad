@@ -15,7 +15,8 @@
                             <br /> grâce à l’IA et à l’automatisation, tout en s’adaptant aux besoins de chaque membre
                             du groupe.
                         </p>
-                        <a href="#" class="play-btn video-popup"><i class="fa fa-play"></i></a>
+                        <a href="{{ route('request.index') }}" class="primary-btn border-btn" style="color:white;">Créer mon expérience
+                            personnalisée</a>
                     </div>
                 </div>
             </div>
