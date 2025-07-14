@@ -68,6 +68,11 @@
 
             <div class="form-row">
                 <div class="form-group col-md-6">
+                    <label for="birth_date">Date de naissance</label>
+                    <input type="date" class="form-control" id="birth_date" name="birth_date"
+                        value="{{ old('birth_date') }}" required>
+                </div>
+                <div class="form-group col-md-6">
                     <label for="gender">Genre</label>
                     <select class="form-control" id="gender" name="gender" required>
                         <option value="">-- Sélectionner --</option>

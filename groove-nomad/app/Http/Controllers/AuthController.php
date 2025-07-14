@@ -58,6 +58,7 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|confirmed|min:8',
             'terms_accepted' => 'accepted',
+            'birth_date' => ['required', 'date', 'before:today'],
         ]);
 
         $user = User::create([
@@ -73,6 +74,7 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'terms_accepted' => true,
+            'birth_date' => $validated['birth_date'],
         ]);
 
         Auth::login($user);

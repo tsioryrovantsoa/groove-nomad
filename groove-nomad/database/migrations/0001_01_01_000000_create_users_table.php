@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('phone_number');           // numéro de téléphone
             $table->enum('gender', ['Male', 'Female', 'Other']); // genre
             $table->enum('marital_status', ['Single', 'Married', 'Divorced', 'Widowed']); // situation matrimoniale
-
+            $table->date('birth_date')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
