@@ -9,80 +9,85 @@
 
             <div class="form-row">
                 <div class="form-group col-md-6">
-                    <label for="nom">Nom</label>
-                    <input type="text" class="form-control" id="nom" name="nom" value="{{ old('nom') }}"
+                    <label for="last_name">Nom</label>
+                    <input type="text" class="form-control" id="last_name" name="last_name" value="{{ old('last_name') }}"
                         required>
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="prenom">Prénom</label>
-                    <input type="text" class="form-control" id="prenom" name="prenom" value="{{ old('prenom') }}"
-                        required>
+                    <label for="first_name">Prénom</label>
+                    <input type="text" class="form-control" id="first_name" name="first_name"
+                        value="{{ old('first_name') }}" required>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="adresse">Adresse</label>
-                <input type="text" class="form-control" id="adresse" name="adresse" value="{{ old('adresse') }}"
+                <label for="address">Adresse</label>
+                <input type="text" class="form-control" id="address" name="address" value="{{ old('address') }}"
                     required>
             </div>
 
             <div class="form-row">
                 <div class="form-group col-md-6">
-                    <label for="ville">Ville de résidence</label>
-                    <input type="text" class="form-control" id="ville" name="ville" value="{{ old('ville') }}"
+                    <label for="city">Ville de résidence</label>
+                    <input type="text" class="form-control" id="city" name="city" value="{{ old('city') }}"
                         required>
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="passeport">Pays du passeport</label>
-                    <select class="form-control" id="passeport" name="passeport" required>
-                        <option value="">-- Sélectionner --</option>
-                        @foreach ($countries as $country)
-                            <option value="{{ $country->iso2 }}" {{ old('passeport') == $country->iso2 ? 'selected' : '' }}>
-                                {{ $country->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group col-md-6">
-                    <label for="nationalite">Nationalité</label>
-                    <select class="form-control" id="nationalite" name="nationalite" required>
+                    <label for="passport_country">Pays du passeport</label>
+                    <select class="form-control" id="passport_country" name="passport_country" required>
                         <option value="">-- Sélectionner --</option>
                         @foreach ($countries as $country)
                             <option value="{{ $country->iso2 }}"
-                                {{ old('nationalite') == $country->iso2 ? 'selected' : '' }}>
+                                {{ old('passport_country') == $country->iso2 ? 'selected' : '' }}>
+                                {{ $country->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="nationality">Nationalité</label>
+                    <select class="form-control" id="nationality" name="nationality" required>
+                        <option value="">-- Sélectionner --</option>
+                        @foreach ($countries as $country)
+                            <option value="{{ $country->iso2 }}"
+                                {{ old('nationality') == $country->iso2 ? 'selected' : '' }}>
                                 {{ $country->name }}
                             </option>
                         @endforeach
                     </select>
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="telephone">Numéro de téléphone</label>
-                    <input type="tel" class="form-control" id="telephone" name="telephone"
-                        value="{{ old('telephone') }}" required>
+                    <label for="phone_number">Numéro de téléphone</label>
+                    <input type="tel" class="form-control" id="phone_number" name="phone_number"
+                        value="{{ old('phone_number') }}" required>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group col-md-6">
-                    <label for="genre">Genre</label>
-                    <select class="form-control" id="genre" name="genre" required>
+                    <label for="gender">Genre</label>
+                    <select class="form-control" id="gender" name="gender" required>
                         <option value="">-- Sélectionner --</option>
-                        <option value="Homme">Homme</option>
-                        <option value="Femme">Femme</option>
-                        <option value="Autre">Autre</option>
+                        <option value="Male" {{ old('gender') == 'Male' ? 'selected' : '' }}>Homme</option>
+                        <option value="Female" {{ old('gender') == 'Female' ? 'selected' : '' }}>Femme</option>
+                        <option value="Other" {{ old('gender') == 'Other' ? 'selected' : '' }}>Autre</option>
                     </select>
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="situation">Situation matrimoniale</label>
-                    <select class="form-control" id="situation" name="situation" required>
+                    <label for="marital_status">Situation matrimoniale</label>
+                    <select class="form-control" id="marital_status" name="marital_status" required>
                         <option value="">-- Sélectionner --</option>
-                        <option value="Célibataire">Célibataire</option>
-                        <option value="Marié(e)">Marié(e)</option>
-                        <option value="Divorcé(e)">Divorcé(e)</option>
-                        <option value="Veuf(ve)">Veuf(ve)</option>
+                        <option value="Single" {{ old('marital_status') == 'Single' ? 'selected' : '' }}>Célibataire
+                        </option>
+                        <option value="Married" {{ old('marital_status') == 'Married' ? 'selected' : '' }}>Marié(e)
+                        </option>
+                        <option value="Divorced" {{ old('marital_status') == 'Divorced' ? 'selected' : '' }}>Divorcé(e)
+                        </option>
+                        <option value="Widowed" {{ old('marital_status') == 'Widowed' ? 'selected' : '' }}>Veuf(ve)
+                        </option>
                     </select>
                 </div>
             </div>
@@ -106,8 +111,8 @@
             </div>
 
             <div class="form-group form-check mt-3">
-                <input type="checkbox" class="form-check-input" id="acceptation" name="acceptation" required>
-                <label class="form-check-label" for="acceptation">
+                <input type="checkbox" class="form-check-input" id="terms_accepted" name="terms_accepted" required>
+                <label class="form-check-label" for="terms_accepted">
                     J'accepte les <a href="#">conditions d'utilisation</a> et la <a href="#">politique de
                         confidentialité</a>.
                 </label>

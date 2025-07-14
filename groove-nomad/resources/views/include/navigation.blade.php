@@ -14,9 +14,23 @@
                                 <li class="{{ request()->routeIs('home') ? 'active' : '' }}">
                                     <a href="{{ route('home') }}">Accueil</a>
                                 </li>
-                                <li class="{{ request()->routeIs('auth.*') ? 'active' : '' }}">
-                                    <a href="{{ route('auth.login') }}">Connexion</a>
-                                </li>
+                                @guest
+                                    <li class="{{ request()->routeIs('auth.*') ? 'active' : '' }}">
+                                        <a href="{{ route('auth.login') }}">Connexion</a>
+                                    </li>
+                                @endguest
+
+                                @auth
+                                    <li>
+                                        <form method="POST" action="{{ route('auth.logout') }}">
+                                            @csrf
+                                            <button type="submit"
+                                                style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
+                                                DECONNEXION
+                                            </button>
+                                        </form>
+                                    </li>
+                                @endauth
                             </ul>
                         </nav>
                         <div class="header__right__social">

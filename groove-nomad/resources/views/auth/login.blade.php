@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="col-lg-6 offset-lg-3">
-        <form method="POST" action="#">
+        <form method="POST" action="#{{ route('auth.login') }}">
             @csrf
 
             <div class="form-group">

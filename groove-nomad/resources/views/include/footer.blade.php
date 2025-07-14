@@ -1,4 +1,5 @@
-<footer class="footer {{ request()->routeIs('home') ? '' : 'footer--normal' }} spad set-bg" data-setbg="{{ asset('img/footer-bg.png') }}">
+<footer class="footer {{ request()->routeIs('home') ? '' : 'footer--normal' }} spad set-bg"
+    data-setbg="{{ asset('img/footer-bg.png') }}">
     <div class="container">
         <div class="row">
             <div class="col-lg-3 col-md-6">
@@ -62,3 +63,36 @@
 
 <script src="{{ asset('js/jquery.jplayer.min.js') }}"></script>
 <script src="{{ asset('js/jplayerInit.js') }}"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+<script>
+    toastr.options = {
+        "positionClass": "toast-bottom-right",
+        "timeOut": "5000",
+        "progressBar": true,
+    };
+
+    @if (session('success'))
+        toastr.success("{{ session('success') }}");
+    @endif
+
+    @if (session('error'))
+        toastr.error("{{ session('error') }}");
+    @endif
+
+    @if (session('warning'))
+        toastr.warning("{{ session('warning') }}");
+    @endif
+
+    @if (session('info'))
+        toastr.info("{{ session('info') }}");
+    @endif
+
+    @if ($errors->any())
+        @foreach ($errors->all() as $error)
+            toastr.error("{{ $error }}");
+        @endforeach
+    @endif
+</script>
