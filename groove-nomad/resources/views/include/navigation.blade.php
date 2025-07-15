@@ -17,8 +17,8 @@
                                 <li class="{{ request()->routeIs(patterns: 'festival.*') ? 'active' : '' }}">
                                     <a href="{{ route('festival.index') }}">Festival</a>
                                 </li>
-                                <li class="{{ request()->routeIs('request.*') ? 'active' : '' }}">
-                                    <a href="{{ route('request.index') }}">Devis</a>
+                                <li class="{{ request()->routeIs('request.create') ? 'active' : '' }}">
+                                    <a href="{{ route('request.create') }}">Créer mon experience personnalisée</a>
                                 </li>
                                 @guest
                                     <li class="{{ request()->routeIs('auth.*') ? 'active' : '' }}">
@@ -27,6 +27,9 @@
                                 @endguest
 
                                 @auth
+                                    <li class="{{ request()->routeIs('request.index') ? 'active' : '' }}">
+                                        <a href="{{ route('request.index') }}">Devis</a>
+                                    </li>
                                     <li>
                                         <form method="POST" action="{{ route('auth.logout') }}">
                                             @csrf

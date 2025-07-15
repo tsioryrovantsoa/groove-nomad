@@ -1,21 +1,28 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FestivalController;
 use App\Http\Controllers\RequestController;
-use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('home');
-})->name('home');
-
-Route::get('/login', [AuthController::class, 'login'])->name('auth.login');
-Route::post('/login', [AuthController::class, 'dologin'])->name('auth.login');
-Route::get('/register', [AuthController::class, 'register'])->name('auth.register');
-Route::post('/register', [AuthController::class, 'doregister'])->name('auth.register');
-Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
+Route::get('/', fn() => view('home'))->name('home');
 
 Route::get('/festival', [FestivalController::class, 'index'])->name('festival.index');
 
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'login'])->name('login');
+    Route::post('/login', [AuthController::class, 'dologin'])->name('auth.login');
 
-Route::get('/request', [RequestController::class, 'index'])->name('request.index');
+    Route::get('/register', [AuthController::class, 'register'])->name('auth.register');
+    Route::post('/register', [AuthController::class, 'doregister'])->name('auth.register');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('auth.logout');
+
+    Route::prefix('request')->name('request.')->group(function () {
+        Route::get('/', [RequestController::class, 'index'])->name('index');
+        Route::get('/create', [RequestController::class, 'create'])->name('create');
+        Route::post('/', [RequestController::class, 'store'])->name('store');
+    });
+});
