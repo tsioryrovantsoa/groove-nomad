@@ -76,7 +76,7 @@ h6 {
 
 p {
     font-size: 15px;
-    font-family: "Now Regular";
+    font-family: "Inter";
     color: #444444;
     font-weight: 400;
     line-height: 26px;
@@ -263,7 +263,6 @@ ol {
 -----------------------*/
 
 .header {
-    /* background: rgba(42, 1, 74, 0.5); */
     position: absolute;
     left: 0;
     top: 0;
@@ -399,7 +398,7 @@ ol {
 -----------------------*/
 
 .hero {
-    padding-top: 400px;
+    padding-top: 295px;
     padding-bottom: 295px;
     position: relative;
 }
