@@ -29,4 +29,9 @@ class Request extends Model
         'date_start' => 'date',
         'date_end' => 'date',
     ];
+
+    public function proposals()
+    {
+        return $this->hasMany(\App\Models\Proposal::class);
+    }
 }

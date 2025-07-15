@@ -39,4 +39,13 @@ return [
         'api_key' => env('AIRTABLE_API_KEY'),
         'base_id' => env('AIRTABLE_BASE_ID'),
     ],
+
+    'open_ai' => [
+        'api_key' => env('OPEN_AI_API_KEY'),
+    ],
+
+    'stripe' => [
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
+    ],
 ];

@@ -35,10 +35,9 @@ class TestAirtable extends Command
 
         $data = [
             'fields' => [
-                'Nom Client' => 'Test Client',
-                'Email' => 'test@example.com',
-                'Festival Choisi' => 'Test Festival',
-                'Prix Total' => 999,
+                'Nom Client' => 'Djo',
+                'Email' => 'salohiniaina.fanaingamampiandra@epitech.digital',
+                'Festival Choisi' => 'Ton Festival',
                 'Statut' => 'Todo',
             ],
         ];

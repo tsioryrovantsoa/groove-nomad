@@ -24,4 +24,12 @@ class Festival extends Model
     ];
 
     public $translatable = ['description'];
+
+    protected function casts(): array
+    {
+        return [
+            'start_date' => 'datetime',
+            'end_date' => 'datetime',
+        ];
+    }
 }

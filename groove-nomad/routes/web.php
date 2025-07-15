@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FestivalController;
+use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\RequestController;
 
 Route::get('/', fn() => view('home'))->name('home');
@@ -25,4 +26,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', [RequestController::class, 'create'])->name('create');
         Route::post('/', [RequestController::class, 'store'])->name('store');
     });
+
+    Route::put('/proposals/{proposal}/accept', [ProposalController::class, 'acceptAndRedirectToStripe'])
+        ->name('proposals.accept');
+
+    Route::get('/proposals/{proposal}/payment/success', [ProposalController::class, 'handleStripeSuccess'])
+        ->name('proposals.payment.success');
 });
