@@ -28,7 +28,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate(); // protège contre les attaques de session fixation
-            return redirect()->intended(route('home'))->with('success', 'Connexion réussie.');
+            return redirect()->intended(route('request.index'))->with('success', 'Connexion réussie.');
         }
 
         // ❌ Erreur : identifiants invalides
