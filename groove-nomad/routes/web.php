@@ -29,6 +29,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [RequestController::class, 'store'])->name('store');
     });
 
+    Route::prefix('chat')->name('chat.')->group(function () {
+        Route::get('/', [RequestController::class, 'chat'])->name('index');
+    });
+
     Route::put('/proposals/{proposal}/reject', [ProposalController::class, 'reject'])
         ->name('proposals.reject');
 

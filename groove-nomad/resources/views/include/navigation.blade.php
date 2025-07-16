@@ -18,7 +18,7 @@
                                     <a href="{{ route('festival.index') }}">Festival</a>
                                 </li>
                                 <li class="{{ request()->routeIs('request.create') ? 'active' : '' }}">
-                                    <a href="{{ route('request.create') }}">Créer mon experience personnalisée</a>
+                                    <a href="{{ route('request.create') }}">Preferences</a>
                                 </li>
                                 @guest
                                     <li class="{{ request()->routeIs('auth.*') ? 'active' : '' }}">
@@ -29,6 +29,9 @@
                                 @auth
                                     <li class="{{ request()->routeIs('request.index') ? 'active' : '' }}">
                                         <a href="{{ route('request.index') }}">Devis</a>
+                                    </li>
+                                    <li class="{{ request()->routeIs('chat.*') ? 'active' : '' }}">
+                                        <a href="{{ route('chat.index') }}">Chat IA</a>
                                     </li>
                                     <li>
                                         <form method="POST" action="{{ route('auth.logout') }}">

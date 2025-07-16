@@ -104,6 +104,18 @@ class RequestController extends Controller
         ]);
     }
 
+    public function chat()
+    {
+        $regions = Festival::select('region')
+            ->groupBy('region')
+            ->orderBy('region', 'asc')
+            ->get();
+
+        return view('chat.index', [
+            'regions' => $regions,
+        ]);
+    }
+
     public function store(Request $request)
     {
         $user = $request->user();
@@ -140,7 +152,7 @@ class RequestController extends Controller
 
         $requestModel = ModelsRequest::create($data);
 
-        // Nettoyer la session
+        // Nettoyer la session si elle existe
         $request->session()->forget('step1_data');
 
         GenerateProposalJob::dispatch($requestModel);
