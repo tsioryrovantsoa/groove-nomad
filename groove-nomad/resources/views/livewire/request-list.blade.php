@@ -13,7 +13,7 @@
                         </span>
                     </div>
                 </div>
-                
+
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
@@ -25,7 +25,7 @@
                                     {{ $request->budget ? number_format($request->budget, 0, ',', ' ') . ' €' : 'Non précisé' }}
                                 </p>
                             </div>
-                            
+
                             <div class="info-section mb-3">
                                 <h6 class="text-muted mb-2">
                                     <i class="fa fa-calendar mr-1"></i>Dates
@@ -41,7 +41,7 @@
                                 </p>
                             </div>
                         </div>
-                        
+
                         <div class="col-md-6">
                             <div class="info-section mb-3">
                                 <h6 class="text-muted mb-2">
@@ -49,7 +49,7 @@
                                 </h6>
                                 <p class="h6 mb-0">{{ $request->region ?? 'Non précisée' }}</p>
                             </div>
-                            
+
                             <div class="info-section mb-3">
                                 <h6 class="text-muted mb-2">
                                     <i class="fa fa-users mr-1"></i>Voyageurs
@@ -75,8 +75,8 @@
                             <i class="fa fa-lightbulb-o mr-1"></i>
                             <strong>{{ $request->proposals->count() }}</strong> proposition(s)
                         </span>
-                        
-                        @if($request->status === 'pending')
+
+                        @if ($request->status === 'pending')
                             <span class="badge badge-secondary">
                                 <i class="fa fa-clock-o mr-1"></i>En attente
                             </span>
@@ -99,7 +99,7 @@
                             <h6 class="text-muted mb-3">
                                 <i class="fa fa-lightbulb-o mr-2"></i>Propositions générées
                             </h6>
-                            
+
                             @foreach ($request->proposals as $proposal)
                                 <div class="proposal-card mb-3">
                                     <div class="card border-0 shadow-sm">
@@ -109,17 +109,18 @@
                                                     <i class="fa fa-cog text-primary mr-2"></i>
                                                     <strong>Proposition #{{ $proposal->id }}</strong>
                                                 </div>
-                                                <span class="badge badge-{{ $proposal->status === 'generated' ? 'secondary' : ($proposal->status === 'accepted' ? 'success' : 'danger') }} badge-pill">
+                                                <span
+                                                    class="badge badge-{{ $proposal->status === 'generated' ? 'secondary' : ($proposal->status === 'accepted' ? 'success' : 'danger') }} badge-pill">
                                                     {{ ucfirst($proposal->status) }}
                                                 </span>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="card-body">
                                             <div class="proposal-content mb-3">
                                                 {!! Str::markdown($proposal->response_text) !!}
                                             </div>
-                                            
+
                                             <div class="price-section text-center p-3 bg-light rounded">
                                                 <h5 class="text-success mb-0">
                                                     <i class="fa fa-euro mr-1"></i>
@@ -144,15 +145,15 @@
                                                         <i class="fa fa-times mr-1"></i>Refuser
                                                     </button>
 
-                                                    <div id="refusal-{{ $proposal->id }}" class="mt-3 d-none" wire:ignore>
+                                                    <div id="refusal-{{ $proposal->id }}" class="mt-3 d-none"
+                                                        wire:ignore>
                                                         <div class="form-group">
-                                                            <textarea wire:model.defer="rejectionReason" 
-                                                                class="form-control" rows="3" 
-                                                                placeholder="Expliquez pourquoi vous refusez cette proposition..."></textarea>
+                                                            <textarea wire:model.defer="rejectionReason" class="form-control" rows="3"
+                                                                placeholder="Expliquez pourquoi vous refusez cette proposition... Discutez avec l'IA pour trouver une solution."></textarea>
                                                         </div>
                                                         <button wire:click="rejectProposal({{ $proposal->id }})"
-                                                            class="btn btn-danger">
-                                                            <i class="fa fa-paper-plane-o mr-1"></i>Confirmer le refus
+                                                            class="btn btn-primary">
+                                                            <i class="fa fa-paper-plane-o mr-1"></i>Envoyer
                                                         </button>
                                                     </div>
                                                 </div>
@@ -203,7 +204,7 @@
         @endforelse
 
         {{-- Pagination --}}
-        @if($requests->hasPages())
+        @if ($requests->hasPages())
             <div class="d-flex justify-content-center mt-4">
                 {{ $requests->links() }}
             </div>
@@ -215,51 +216,51 @@
         .bg-gradient-primary {
             background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
         }
-        
+
         .info-section {
             padding: 0.75rem;
             border-radius: 0.5rem;
             background-color: #f8f9fa;
         }
-        
+
         .proposal-content {
             line-height: 1.6;
         }
-        
+
         .proposal-content p {
             margin-bottom: 1rem;
         }
-        
+
         .proposal-content ul {
             margin-bottom: 1.5rem;
             padding-left: 1.5rem;
         }
-        
+
         .proposal-content li {
             margin-bottom: 0.5rem;
         }
-        
+
         .price-section {
             border: 2px solid #e9ecef;
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         }
-        
+
         .action-buttons {
             border-top: 1px solid #e9ecef;
             padding-top: 1rem;
         }
-        
+
         .empty-state {
             max-width: 400px;
             margin: 0 auto;
         }
-        
+
         /* Animation de frappe */
         .typing-indicator {
             display: flex;
             gap: 4px;
         }
-        
+
         .typing-indicator span {
             width: 8px;
             height: 8px;
@@ -267,26 +268,30 @@
             background-color: #6c757d;
             animation: typing 1.4s infinite ease-in-out;
         }
-        
+
         .typing-indicator span:nth-child(1) {
             animation-delay: -0.32s;
         }
-        
+
         .typing-indicator span:nth-child(2) {
             animation-delay: -0.16s;
         }
-        
+
         @keyframes typing {
-            0%, 80%, 100% {
+
+            0%,
+            80%,
+            100% {
                 transform: scale(0.8);
                 opacity: 0.5;
             }
+
             40% {
                 transform: scale(1);
                 opacity: 1;
             }
         }
-        
+
         /* Responsive */
         @media (max-width: 768px) {
             .action-buttons .btn {
@@ -294,18 +299,18 @@
                 width: 100%;
                 margin-bottom: 0.5rem;
             }
-            
+
             .action-buttons .btn:last-child {
                 margin-bottom: 0;
             }
         }
-        
+
         /* Hover effects */
         .proposal-card .card:hover {
             transform: translateY(-2px);
             transition: transform 0.2s ease;
         }
-        
+
         .btn:hover {
             transform: translateY(-1px);
             transition: transform 0.1s ease;
