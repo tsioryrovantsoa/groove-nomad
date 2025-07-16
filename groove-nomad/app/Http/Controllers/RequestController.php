@@ -51,7 +51,7 @@ class RequestController extends Controller
 
             'region' => ['required', 'string', 'max:100'],
 
-            'type_aventure' => ['nullable', 'in:chill,exploratrice,luxe,roots'],
+            'type_aventure' => ['required', 'in:chill,exploratrice,luxe,roots'],
 
             'nombre_personnes' => ['required', 'integer', 'min:1', 'max:20'],
 
