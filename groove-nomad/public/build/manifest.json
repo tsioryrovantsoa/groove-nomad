@@ -1,0 +1,61 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-BAmyaSJ1.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/fonts/Now-Black.woff": {
+    "file": "assets/Now-Black-IxEfAjMs.woff",
+    "src": "resources/fonts/Now-Black.woff"
+  },
+  "resources/fonts/Now-Bold.woff": {
+    "file": "assets/Now-Bold-DmvyiVyC.woff",
+    "src": "resources/fonts/Now-Bold.woff"
+  },
+  "resources/fonts/Now-Light.woff": {
+    "file": "assets/Now-Light-DJx3AsJL.woff",
+    "src": "resources/fonts/Now-Light.woff"
+  },
+  "resources/fonts/Now-Medium.woff": {
+    "file": "assets/Now-Medium-C6H4cwZW.woff",
+    "src": "resources/fonts/Now-Medium.woff"
+  },
+  "resources/fonts/Now-Regular.woff": {
+    "file": "assets/Now-Regular-DbYZcyTG.woff",
+    "src": "resources/fonts/Now-Regular.woff"
+  },
+  "resources/fonts/Now-Thin.woff": {
+    "file": "assets/Now-Thin-BG-0T9Gh.woff",
+    "src": "resources/fonts/Now-Thin.woff"
+  },
+  "resources/fonts/Rockville Solid.woff": {
+    "file": "assets/Rockville Solid-Stmg6lNV.woff",
+    "src": "resources/fonts/Rockville Solid.woff"
+  },
+  "resources/fonts/fontawesome-webfont.eot": {
+    "file": "assets/fontawesome-webfont-G5YE5S7X.eot",
+    "src": "resources/fonts/fontawesome-webfont.eot"
+  },
+  "resources/fonts/fontawesome-webfont.svg": {
+    "file": "assets/fontawesome-webfont-D13rzr4g.svg",
+    "src": "resources/fonts/fontawesome-webfont.svg"
+  },
+  "resources/fonts/fontawesome-webfont.ttf": {
+    "file": "assets/fontawesome-webfont-CQDK8MU3.ttf",
+    "src": "resources/fonts/fontawesome-webfont.ttf"
+  },
+  "resources/fonts/fontawesome-webfont.woff": {
+    "file": "assets/fontawesome-webfont-CDK5bt4p.woff",
+    "src": "resources/fonts/fontawesome-webfont.woff"
+  },
+  "resources/fonts/fontawesome-webfont.woff2": {
+    "file": "assets/fontawesome-webfont-B-jkhYfk.woff2",
+    "src": "resources/fonts/fontawesome-webfont.woff2"
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-Q2GXiMx-.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  }
+}
