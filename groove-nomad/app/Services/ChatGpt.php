@@ -31,7 +31,7 @@ class ChatGpt
             $request->update(['status' => 'generating']);
 
             $prompt = $this->buildTravelPrompt($request, $festival);
-            $aiResponse = $this->getAiResponse($prompt);
+            $aiResponse = $this->getAiResponse($prompt, $request);
 
             if (!$aiResponse) {
                 Log::error('Aucune réponse reçue de l\'IA pour la demande', [
@@ -74,7 +74,7 @@ class ChatGpt
     }
 
     /**
-     * Construit le prompt pour l'IA
+     * Construit le prompt pour l'IA avec historique des refus
      *
      * @param Request $request
      * @param Festival $festival
@@ -83,6 +83,27 @@ class ChatGpt
     private function buildTravelPrompt(Request $request, Festival $festival): string
     {
         $duration = $request->date_start->diffInDays($request->date_end) + 1;
+
+        // Récupérer l'historique des propositions refusées
+        $rejectedProposals = $request->proposals()
+            ->where('status', 'rejected')
+            ->whereNotNull('rejection_reason')
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        $rejectionHistory = '';
+        if ($rejectedProposals->count() > 0) {
+            $rejectionHistory = "\n\n📋 **HISTORIQUE DES PROPOSITIONS REFUSÉES :**\n\n";
+
+            foreach ($rejectedProposals as $index => $proposal) {
+                $rejectionHistory .= "**Proposition #{$proposal->id}** (refusée le " . $proposal->created_at->format('d/m/Y') . ") :\n";
+                $rejectionHistory .= "❌ Motif du refus : {$proposal->rejection_reason}\n";
+                $rejectionHistory .= "💰 Prix proposé : {$proposal->total_price} €\n";
+                $rejectionHistory .= "🎪 Festival : {$proposal->festival->name}\n\n";
+            }
+
+            $rejectionHistory .= "⚠️ **IMPORTANT** : Prends en compte ces refus pour proposer quelque chose de différent et mieux adapté.\n\n";
+        }
 
         return <<<EOT
 Tu es un assistant de voyage IA spécialisé dans l'organisation de séjours sur mesure incluant des festivals de musique.
@@ -104,7 +125,7 @@ Festival sélectionné :
 - 🪩 Nom : {$festival->name}
 - 📆 Dates : du {$festival->start_date->format('d/m/Y')} au {$festival->end_date->format('d/m/Y')}
 - 📍 Lieu : {$festival->location}, {$festival->region}
-- 📝 Description : {$festival->description}
+- 📝 Description : {$festival->description}{$rejectionHistory}
 
 ---
 
@@ -152,18 +173,48 @@ EOT;
     }
 
     /**
-     * Obtient la réponse de l'IA
+     * Obtient la réponse de l'IA avec historique des conversations
      *
      * @param string $prompt
+     * @param Request $request
      * @return string|null
      */
-    private function getAiResponse(string $prompt): ?string
+    private function getAiResponse(string $prompt, Request $request): ?string
     {
         try {
             $messages = [
                 ['role' => 'system', 'content' => 'Tu es un assistant de voyage IA. Sois structuré, professionnel et convivial.'],
-                ['role' => 'user', 'content' => $prompt],
             ];
+
+            // Ajouter l'historique des conversations précédentes
+            $previousProposals = $request->proposals()
+                ->whereIn('status', ['generated', 'rejected'])
+                ->orderBy('created_at', 'asc')
+                ->get();
+
+            foreach ($previousProposals as $proposal) {
+                // Ajouter la proposition précédente comme contexte
+                $messages[] = [
+                    'role' => 'user',
+                    'content' => "Proposition précédente #{$proposal->id} :\n{$proposal->prompt_text}"
+                ];
+
+                $messages[] = [
+                    'role' => 'assistant',
+                    'content' => $proposal->response_text
+                ];
+
+                // Si la proposition a été refusée, ajouter le feedback
+                if ($proposal->status === 'rejected' && $proposal->rejection_reason) {
+                    $messages[] = [
+                        'role' => 'user',
+                        'content' => "Cette proposition a été refusée. Motif : {$proposal->rejection_reason}"
+                    ];
+                }
+            }
+
+            // Ajouter la nouvelle demande
+            $messages[] = ['role' => 'user', 'content' => $prompt];
 
             $response = $this->client->chat()->create([
                 'model' => 'gpt-4',
