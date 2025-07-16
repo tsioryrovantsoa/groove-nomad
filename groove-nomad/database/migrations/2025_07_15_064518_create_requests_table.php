@@ -26,7 +26,6 @@ return new class extends Migration
 
             // Adventure details
             $table->string('region')->nullable();
-            $table->enum('adventure_type', ['chill', 'exploratrice', 'luxe', 'roots'])->nullable();
             $table->unsignedTinyInteger('people_count')->nullable();
 
             // Cultural Tastes

@@ -15,7 +15,6 @@
                     </p>
 
                     <p><strong>Région :</strong> {{ $request->region ?? 'Non précisée' }}</p>
-                    <p><strong>Type d'aventure :</strong> {{ ucfirst($request->adventure_type) ?? 'Non précisé' }}</p>
                     <p><strong>Nombre de personnes :</strong> {{ $request->people_count ?? 'Non précisé' }}</p>
 
                     <p><strong>Statut :</strong> {{ ucfirst($request->status) }}</p>

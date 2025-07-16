@@ -24,6 +24,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('request')->name('request.')->group(function () {
         Route::get('/', [RequestController::class, 'index'])->name('index');
         Route::get('/create', [RequestController::class, 'create'])->name('create');
+        Route::post('/step1', [RequestController::class, 'storeStep1'])->name('store.step1');
+        Route::get('/create/step2', [RequestController::class, 'createStep2'])->name('create.step2');
         Route::post('/', [RequestController::class, 'store'])->name('store');
     });
 

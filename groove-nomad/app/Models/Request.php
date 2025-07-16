@@ -13,7 +13,6 @@ class Request extends Model
         'date_start',
         'date_end',
         'region',
-        'adventure_type',
         'people_count',
         'cultural_tastes',
         'phobias',

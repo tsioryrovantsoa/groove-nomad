@@ -23,6 +23,7 @@ class RequestController extends Controller
             'userPreferences' => $userPreferences
         ]);
     }
+
     public function create()
     {
         $genres = MusicGenre::all();
@@ -43,48 +44,19 @@ class RequestController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function storeStep1(Request $request)
     {
         $user = $request->user();
         $validated = $request->validate([
             'genres' => ['nullable', 'array'],
             'genres.*' => ['integer', 'exists:music_genres,id'],
-
-            'budget' => ['required', 'integer', 'min:0'],
-
-            'date_start' => ['required', 'date'],
-            'date_end' => ['required', 'date', 'after_or_equal:date_start'],
-
-            'region' => ['required', 'string', 'max:100'],
-
-            'type_aventure' => ['required', 'in:chill,exploratrice,luxe,roots'],
-
-            'nombre_personnes' => ['required', 'integer', 'min:1', 'max:20'],
-
             'interets' => ['nullable', 'array'],
             'interets.*' => ['integer', 'exists:cultural_tastes,id'],
-
             'phobies' => ['nullable', 'array'],
             'phobies.*' => ['integer', 'exists:phobias,id'],
-
             'allergies' => ['nullable', 'array'],
             'allergies.*' => ['integer', 'exists:allergies,id'],
         ]);
-
-        $data = [
-            'user_id' => $user->id,
-            'genres' => $validated['genres'] ?? [],
-            'budget' => $validated['budget'] ?? null,
-            'date_start' => $validated['date_start'] ?? null,
-            'date_end' => $validated['date_end'] ?? null,
-            'region' => $validated['region'] ?? null,
-            'adventure_type' => $validated['type_aventure'] ?? null,
-            'people_count' => $validated['nombre_personnes'] ?? null,
-            'cultural_tastes' => $validated['interets'] ?? [],
-            'phobias' => $validated['phobies'] ?? [],
-            'allergies' => $validated['allergies'] ?? [],
-            'status' => 'pending',
-        ];
 
         // Créer ou mettre à jour les préférences utilisateur
         $userPreference = $user->preferences()->firstOrCreate();
@@ -109,9 +81,69 @@ class RequestController extends Controller
             $userPreference->addAllergies($validated['allergies']);
         }
 
-        $request = ModelsRequest::create($data);
+        // Stocker les données en session pour l'étape 2
+        $request->session()->put('step1_data', $validated);
 
-        // GenerateProposalJob::dispatch($request);
+        return redirect()->route('request.create.step2');
+    }
+
+    public function createStep2()
+    {
+        // Vérifier que l'utilisateur a complété l'étape 1
+        if (!session()->has('step1_data')) {
+            return redirect()->route('request.create');
+        }
+
+        $regions = Festival::select('region')
+            ->groupBy('region')
+            ->orderBy('region', 'asc')
+            ->get();
+
+        return view('request.create-step2', [
+            'regions' => $regions,
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $user = $request->user();
+        
+        $validated = $request->validate([
+            'budget' => ['required', 'integer', 'min:0'],
+            'date_start' => ['required', 'date'],
+            'date_end' => ['required', 'date', 'after_or_equal:date_start'],
+            'region' => ['required', 'string', 'max:100'],
+            'nombre_personnes' => ['required', 'integer', 'min:1', 'max:20'],
+        ]);
+
+        // Récupérer directement depuis les préférences utilisateur
+        $userPreferences = $user->preferences;
+        
+        $genres = $userPreferences ? $userPreferences->musicGenres->pluck('name')->toArray() : [];
+        $culturalTastes = $userPreferences ? $userPreferences->culturalTastes->pluck('name')->toArray() : [];
+        $phobias = $userPreferences ? $userPreferences->phobias->pluck('description')->toArray() : [];
+        $allergies = $userPreferences ? $userPreferences->allergies->pluck('name')->toArray() : [];
+
+        $data = [
+            'user_id' => $user->id,
+            'genres' => $genres,
+            'budget' => $validated['budget'],
+            'date_start' => $validated['date_start'],
+            'date_end' => $validated['date_end'],
+            'region' => $validated['region'],
+            'people_count' => $validated['nombre_personnes'],
+            'cultural_tastes' => $culturalTastes,
+            'phobias' => $phobias,
+            'allergies' => $allergies,
+            'status' => 'pending',
+        ];
+
+        $requestModel = ModelsRequest::create($data);
+
+        // Nettoyer la session
+        $request->session()->forget('step1_data');
+
+        GenerateProposalJob::dispatch($requestModel);
 
         return to_route('request.index')->with('success', 'Demande enregistrée avec succès.');
     }

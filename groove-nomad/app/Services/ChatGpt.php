@@ -152,7 +152,6 @@ Voici les informations du client :
 - Region souhaitee : " . $this->cleanTextForAI($request->region) . "
 - Nombre de personnes : {$request->people_count}
 - Gouts culturels : " . $this->cleanTextForAI($this->formatList($request->cultural_tastes)) . "
-- Type d'aventure : " . $this->cleanTextForAI($request->adventure_type) . "
 - Phobies a eviter : " . $this->cleanTextForAI($this->formatList($request->phobias)) . "
 - Allergies a prendre en compte : " . $this->cleanTextForAI($this->formatList($request->allergies)) . "
 

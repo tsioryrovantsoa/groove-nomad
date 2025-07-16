@@ -66,7 +66,6 @@ Voici les informations du client :
 - 🌍 Région souhaitée : {$request->region}
 - 👥 Nombre de personnes : {$request->people_count}
 - 🧠 Goûts culturels : {$this->list($request->cultural_tastes)}
-- 🧭 Type d’aventure : {$request->adventure_type}
 - ⚠️ Phobies à éviter : {$this->list($request->phobias)}
 - 🚫 Allergies à prendre en compte : {$this->list($request->allergies)}
 
