@@ -141,34 +141,29 @@ Propose un **programme de séjour immersif et cohérent** de {$duration} jours q
 
 ---
 
-⚠️ **Très important :**
+⚠️ **RÈGLES STRICTES :**
 
-1. **Respecte strictement le budget de {$request->budget} € TTC**
-2. Pour chaque élément du séjour, indique clairement :
-   - Un **titre**
-   - Une **brève description**
-   - Un **prix TTC** en euros
-3. Termine par un **récapitulatif clair des coûts** :
-
-Format attendu :
+1. **LE BUDGET DE {$request->budget} € TTC NE DOIT JAMAIS ÊTRE DÉPASSÉ**
+2. **INTERDICTION** de proposer des suggestions d'optimisation ou de dépassement de budget
+3. **INTERDICTION** de mentionner des alternatives ou des ajustements
+4. Si le budget ne peut pas être respecté, propose une version plus économique (durée réduite, hébergement moins cher, etc.)
+5. Pour chaque élément du séjour, utilise EXACTEMENT ce format :
+   **Nom de l'élément** : Description de l'élément - Prix TTC : XXX €
+6. Termine OBLIGATOIREMENT par ce récapitulatif exact :
 
 Récapitulatif :
 
-Transport : xxx €
+Transport : XXX €
 
-Hébergement : xxx €
+Hébergement : XXX €
 
-Activités : xxx €
+Activités : XXX €
 
-Pass Festival : xxx €
+Pass Festival : XXX €
 
-💶 Prix total TTC : xxx €
-Si le budget est dépassé, **ne le dépasse pas**. Propose plutôt une version optimisée (durée plus courte, alternatives économiques, etc.)
+💶 Prix total TTC : XXX €
 
-Formate la réponse pour qu'elle soit :
-- Facile à lire
-- Claire et professionnelle
-- Facile à extraire pour une application web (avec sections bien séparées)
+**IMPORTANT** : Le prix total doit être inférieur ou égal à {$request->budget} €. Si ce n'est pas possible, propose une version plus économique.
 EOT;
     }
 
@@ -262,15 +257,27 @@ EOT;
      */
     private function createProposalDetails(Proposal $proposal, string $aiResponse): void
     {
-        preg_match_all('/\*\*(.+?)\*\*[\s:-]+(.+?)\s+-\s+(\d+[.,]?\d*)\s*€/i', $aiResponse, $matches, PREG_SET_ORDER);
-
-        foreach ($matches as $match) {
-            ProposalDetail::create([
-                'proposal_id' => $proposal->id,
-                'name'        => trim($match[1]),
-                'description' => trim($match[2]),
-                'price'       => (float) str_replace(',', '.', $match[3]),
-            ]);
+        // Extraire le récapitulatif avec un regex flexible
+        if (preg_match('/Récapitulatif\s*:\s*\n\n(.*?)\n\n💶 Prix total TTC\s*:\s*(\d+[.,]?\d*)\s*€/is', $aiResponse, $recapMatches)) {
+            $recapContent = $recapMatches[1];
+            
+            // Extraire chaque ligne du récapitulatif
+            preg_match_all('/([^:]+):\s*(\d+[.,]?\d*)\s*€/i', $recapContent, $recapLines, PREG_SET_ORDER);
+            
+            foreach ($recapLines as $line) {
+                $name = trim($line[1]);
+                $price = (float) str_replace(',', '.', $line[2]);
+                
+                // Ne pas stocker le prix total
+                if ($name !== 'Prix total TTC') {
+                    ProposalDetail::create([
+                        'proposal_id' => $proposal->id,
+                        'name'        => $name,
+                        'description' => 'Récapitulatif du séjour',
+                        'price'       => $price,
+                    ]);
+                }
+            }
         }
     }
 

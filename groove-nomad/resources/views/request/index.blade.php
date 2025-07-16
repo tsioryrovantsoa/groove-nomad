@@ -40,6 +40,13 @@
 
                     <p><strong>Statut :</strong> {{ ucfirst($request->status) }}</p>
 
+                    @if ($request->status === 'no_festival_found')
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <strong>Information :</strong> Pour le moment, nous n'avons pas de festival prévu à cette date.
+                            Revenez faire votre demande lorsque cette date est proche.
+                        </div>
+                    @endif
+
                     <p class="mt-3 text-primary">
                         <strong>Nombre de propositions :</strong> {{ $request->proposals->count() }}
                     </p>
@@ -52,7 +59,8 @@
                                         <div class="d-flex justify-content-between align-items-center">
                                             <strong>🤖 Proposition #{{ $proposal->id }}</strong>
                                             <span
-                                                class="badge bg-{{ $proposal->status === 'generated' ? 'secondary' : ($proposal->status === 'accepted' ? 'success' : 'danger') }}">
+                                                class="badge bg-{{ $proposal->status === 'generated' ? 'secondary' : ($proposal->status === 'accepted' ? 'success' : 'danger') }}"
+                                                style="color: white;">
                                                 {{ ucfirst($proposal->status) }}
                                             </span>
                                         </div>
@@ -155,14 +163,13 @@
         .chat-bubble-left {
             max-width: 80%;
             border-radius: 1rem;
-            background-color: #f1f2f4;
             margin-right: auto;
         }
 
         .chat-bubble-right {
             max-width: 60%;
             border-radius: 1rem;
-            background-color: #fff3cd;
+            background-color:#f1f2f4;
             margin-left: auto;
         }
 
