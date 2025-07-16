@@ -85,3 +85,5 @@
         @endforeach
     @endif
 </script>
+
+@livewireScripts

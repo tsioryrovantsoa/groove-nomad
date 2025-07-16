@@ -68,14 +68,15 @@
                                         </p>
 
                                         @if ($proposal->status === 'generated')
-                                            <form action="{{ route('proposals.accept', $proposal) }}" method="POST"
-                                                class="mt-3">
-                                                @csrf
-                                                @method('PUT')
-
-                                                <button type="submit" class="btn btn-success btn-sm me-2">
-                                                    ✅ Accepter et payer
-                                                </button>
+                                            <div class="mt-3">
+                                                <form action="{{ route('proposals.accept', $proposal) }}" method="POST"
+                                                    class="d-inline">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <button type="submit" class="btn btn-success btn-sm me-2">
+                                                        ✅ Accepter et payer
+                                                    </button>
+                                                </form>
 
                                                 <button type="button" class="btn btn-outline-danger btn-sm"
                                                     onclick="document.getElementById('refusal-{{ $proposal->id }}').classList.toggle('d-none')">
@@ -83,7 +84,7 @@
                                                 </button>
 
                                                 <div id="refusal-{{ $proposal->id }}" class="mt-2 d-none">
-                                                    <form action="#"
+                                                    <form action="{{ route('proposals.reject', $proposal) }}"
                                                         method="POST">
                                                         @csrf
                                                         @method('PUT')
@@ -93,7 +94,7 @@
                                                             refus</button>
                                                     </form>
                                                 </div>
-                                            </form>
+                                            </div>
                                         @endif
 
                                     </div>

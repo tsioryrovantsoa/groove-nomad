@@ -27,6 +27,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [RequestController::class, 'store'])->name('store');
     });
 
+    Route::put('/proposals/{proposal}/reject', [ProposalController::class, 'reject'])
+        ->name('proposals.reject');
+
     Route::put('/proposals/{proposal}/accept', [ProposalController::class, 'acceptAndRedirectToStripe'])
         ->name('proposals.accept');
 

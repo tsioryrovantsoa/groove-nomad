@@ -13,6 +13,7 @@
         "google/apiclient": "^2.18",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
+        "livewire/livewire": "^3.6",
         "openai-php/client": "^0.14.0",
         "spatie/laravel-translatable": "^6.11",
         "stripe/stripe-php": "^17.4"

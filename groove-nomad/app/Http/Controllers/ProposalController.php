@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\GenerateProposalJob;
 use App\Models\Proposal;
 use Illuminate\Http\Request;
 use Stripe\Stripe;
@@ -51,5 +52,24 @@ class ProposalController extends Controller
         // ... Tu peux aussi envoyer un email ici.
 
         return redirect()->route('request.index')->with('success', 'Proposition acceptée et payée !');
+    }
+
+    public function reject(Request $request, Proposal $proposal)
+    {
+        // Vérification que la proposition est bien en état 'generated'
+        abort_unless($proposal->status === 'generated', 403);
+
+        $validated = $request->validate([
+            'rejection_reason' => 'nullable|string|max:1000'
+        ]);
+
+        $proposal->update([
+            'status' => 'rejected',
+            'rejection_reason' => $validated['rejection_reason'] ?? null,
+        ]);
+
+        GenerateProposalJob::dispatch($proposal->request);
+
+        return redirect()->route('request.index')->with('success', 'Proposition refusée ! Nouvelle proposition en cours de génération...');
     }
 }

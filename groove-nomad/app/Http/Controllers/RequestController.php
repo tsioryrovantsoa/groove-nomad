@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\GenerateProposalJob;
 use App\Models\Allergy;
 use App\Models\CulturalTaste;
 use App\Models\Festival;
@@ -82,7 +83,9 @@ class RequestController extends Controller
             'status' => 'pending',
         ];
 
-        ModelsRequest::create($data);
+        $request = ModelsRequest::create($data);
+
+        GenerateProposalJob::dispatch($request);
 
         return to_route('request.index')->with('success', 'Demande enregistrée avec succès.');
     }
