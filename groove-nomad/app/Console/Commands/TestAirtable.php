@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use App\Models\Festival;
 
 class TestAirtable extends Command
 {
@@ -19,7 +20,7 @@ class TestAirtable extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Envoie tous les festivals vers Airtable';
 
     /**
      * Execute the console command.
@@ -29,26 +30,42 @@ class TestAirtable extends Command
     {
         $apiKey = config('services.airtable.api_key');
         $baseId = config('services.airtable.base_id');
-        $tableName = "Test";
+        $tableName = "Festivals";
 
         $url = "https://api.airtable.com/v0/{$baseId}/{$tableName}";
 
-        $data = [
-            'fields' => [
-                'Nom Client' => 'Djo',
-                'Email' => 'salohiniaina.fanaingamampiandra@epitech.digital',
-                'Festival Choisi' => 'Ton Festival',
-                'Statut' => 'Todo',
-            ],
-        ];
+        // Récupérer tous les festivals
+        $festivals = Festival::all();
 
-        $response = Http::withToken($apiKey)
-            ->post($url, $data);
+        $this->info("Récupération de {$festivals->count()} festivals...");
 
-        if ($response->successful()) {
-            $this->info('Données envoyées avec succès vers Airtable !');
-        } else {
-            $this->error('Erreur : ' . $response->body());
+        foreach ($festivals as $festival) {
+            $data = [
+                'fields' => [
+                    'name' => $festival->name,
+                    'url' => $festival->url,
+                    'image' => $festival->image,
+                    'start_date' => $festival->start_date ? $festival->start_date->format('Y-m-d') : null,
+                    'end_date' => $festival->end_date ? $festival->end_date->format('Y-m-d') : null,
+                    'description' => $festival->description,
+                    'location' => $festival->location,
+                    'city' => $festival->city,
+                    'region' => $festival->region,
+                    'page' => $festival->page,
+                    'region_abbr' => $festival->region_abbr,
+                ],
+            ];
+
+            $response = Http::withToken($apiKey)
+                ->post($url, $data);
+
+            if ($response->successful()) {
+                $this->info("Festival '{$festival->name}' envoyé avec succès vers Airtable !");
+            } else {
+                $this->error("Erreur pour le festival '{$festival->name}': " . $response->body());
+            }
         }
+
+        $this->info('Traitement terminé !');
     }
 }
