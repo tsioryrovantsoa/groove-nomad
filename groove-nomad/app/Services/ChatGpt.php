@@ -74,6 +74,43 @@ class ChatGpt
     }
 
     /**
+     * Formate une liste pour l'affichage
+     *
+     * @param mixed $value
+     * @return string
+     */
+    private function formatList($value): string
+    {
+        if (is_array($value)) {
+            return implode(', ', $value);
+        }
+
+        return trim(str_replace(['[', ']', '"'], '', $value));
+    }
+
+    /**
+     * Nettoie et encode correctement le texte pour l'IA
+     *
+     * @param string $text
+     * @return string
+     */
+    private function cleanTextForAI(string $text): string
+    {
+        // Supprimer les caractères non-UTF8
+        $text = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $text);
+        
+        // Convertir en UTF-8 si nécessaire
+        if (!mb_check_encoding($text, 'UTF-8')) {
+            $text = mb_convert_encoding($text, 'UTF-8', 'ISO-8859-1');
+        }
+        
+        // Nettoyer les caractères spéciaux problématiques
+        $text = str_replace(['', '', '', '', '', ''], '', $text);
+        
+        return $text;
+    }
+
+    /**
      * Construit le prompt pour l'IA avec historique des refus
      *
      * @param Request $request
@@ -93,78 +130,78 @@ class ChatGpt
 
         $rejectionHistory = '';
         if ($rejectedProposals->count() > 0) {
-            $rejectionHistory = "\n\n📋 **HISTORIQUE DES PROPOSITIONS REFUSÉES :**\n\n";
+            $rejectionHistory = "\n\nHISTORIQUE DES PROPOSITIONS REFUSEES :\n\n";
 
             foreach ($rejectedProposals as $index => $proposal) {
-                $rejectionHistory .= "**Proposition #{$proposal->id}** (refusée le " . $proposal->created_at->format('d/m/Y') . ") :\n";
-                $rejectionHistory .= "❌ Motif du refus : {$proposal->rejection_reason}\n";
-                $rejectionHistory .= "💰 Prix proposé : {$proposal->total_price} €\n";
-                $rejectionHistory .= "🎪 Festival : {$proposal->festival->name}\n\n";
+                $rejectionHistory .= "Proposition #{$proposal->id} (refusee le " . $proposal->created_at->format('d/m/Y') . ") :\n";
+                $rejectionHistory .= "Motif du refus : " . $this->cleanTextForAI($proposal->rejection_reason) . "\n";
+                $rejectionHistory .= "Prix propose : {$proposal->total_price} EUR\n";
+                $rejectionHistory .= "Festival : " . $this->cleanTextForAI($proposal->festival->name) . "\n\n";
             }
 
-            $rejectionHistory .= "⚠️ **IMPORTANT** : Prends en compte ces refus pour proposer quelque chose de différent et mieux adapté.\n\n";
+            $rejectionHistory .= "IMPORTANT : Prends en compte ces refus pour proposer quelque chose de different et mieux adapte.\n\n";
         }
 
-        return <<<EOT
-Tu es un assistant de voyage IA spécialisé dans l'organisation de séjours sur mesure incluant des festivals de musique.
+        $prompt = "Tu es un assistant de voyage IA specialise dans l'organisation de sejours sur mesure incluant des festivals de musique.
 
 Voici les informations du client :
 
-- 🎵 Genres musicaux préférés : {$this->formatList($request->genres)}
-- 💰 Budget maximum à ne pas dépasser : {$request->budget} €
-- 📅 Dates de voyage : du {$request->date_start->format('d/m/Y')} au {$request->date_end->format('d/m/Y')} ({$duration} jours)
-- 🌍 Région souhaitée : {$request->region}
-- 👥 Nombre de personnes : {$request->people_count}
-- 🧠 Goûts culturels : {$this->formatList($request->cultural_tastes)}
-- 🧭 Type d'aventure : {$request->adventure_type}
-- ⚠️ Phobies à éviter : {$this->formatList($request->phobias)}
-- 🚫 Allergies à prendre en compte : {$this->formatList($request->allergies)}
+- Genres musicaux preferes : " . $this->cleanTextForAI($this->formatList($request->genres)) . "
+- Budget maximum a ne pas depasser : {$request->budget} EUR
+- Dates de voyage : du {$request->date_start->format('d/m/Y')} au {$request->date_end->format('d/m/Y')} ({$duration} jours)
+- Region souhaitee : " . $this->cleanTextForAI($request->region) . "
+- Nombre de personnes : {$request->people_count}
+- Gouts culturels : " . $this->cleanTextForAI($this->formatList($request->cultural_tastes)) . "
+- Type d'aventure : " . $this->cleanTextForAI($request->adventure_type) . "
+- Phobies a eviter : " . $this->cleanTextForAI($this->formatList($request->phobias)) . "
+- Allergies a prendre en compte : " . $this->cleanTextForAI($this->formatList($request->allergies)) . "
 
-Festival sélectionné :
+Festival selectionne :
 
-- 🪩 Nom : {$festival->name}
-- 📆 Dates : du {$festival->start_date->format('d/m/Y')} au {$festival->end_date->format('d/m/Y')}
-- 📍 Lieu : {$festival->location}, {$festival->region}
-- 📝 Description : {$festival->description}{$rejectionHistory}
-
----
-
-🎯 **Objectif** :
-
-Propose un **programme de séjour immersif et cohérent** de {$duration} jours qui intègre ce festival, avec :
-
-- 🛌 Hébergement adapté
-- 🚗 Transports sécurisés
-- 🎭 Activités culturelles liées aux goûts du client
-- 🍽️ Repas si possible
-- 👁️‍🗨️ Respect des phobies et allergies
+- Nom : " . $this->cleanTextForAI($festival->name) . "
+- Dates : du {$festival->start_date->format('d/m/Y')} au {$festival->end_date->format('d/m/Y')}
+- Lieu : " . $this->cleanTextForAI($festival->location) . ", " . $this->cleanTextForAI($festival->region) . "
+- Description : " . $this->cleanTextForAI($festival->description) . "{$rejectionHistory}
 
 ---
 
-⚠️ **RÈGLES STRICTES :**
+OBJECTIF :
 
-1. **LE BUDGET DE {$request->budget} € TTC NE DOIT JAMAIS ÊTRE DÉPASSÉ**
-2. **INTERDICTION** de proposer des suggestions d'optimisation ou de dépassement de budget
-3. **INTERDICTION** de mentionner des alternatives ou des ajustements
-4. Si le budget ne peut pas être respecté, propose une version plus économique (durée réduite, hébergement moins cher, etc.)
-5. Pour chaque élément du séjour, utilise EXACTEMENT ce format :
-   **Nom de l'élément** : Description de l'élément - Prix TTC : XXX €
-6. Termine OBLIGATOIREMENT par ce récapitulatif exact :
+Propose un programme de sejour immersif et coherent de {$duration} jours qui integre ce festival, avec :
 
-Récapitulatif :
+- Hebergement adapte
+- Transports securises
+- Activites culturelles liees aux gouts du client
+- Repas si possible
+- Respect des phobies et allergies
 
-Transport : XXX €
+---
 
-Hébergement : XXX €
+REGLES STRICTES :
 
-Activités : XXX €
+1. LE BUDGET DE {$request->budget} EUR TTC NE DOIT JAMAIS ETRE DEPASSE
+2. INTERDICTION de proposer des suggestions d'optimisation ou de depassement de budget
+3. INTERDICTION de mentionner des alternatives ou des ajustements
+4. Si le budget ne peut pas etre respecte, propose une version plus economique (duree reduite, hebergement moins cher, etc.)
+5. Pour chaque element du sejour, utilise EXACTEMENT ce format :
+   **Nom de l'element** : Description de l'element - Prix TTC : XXX EUR
+6. Termine OBLIGATOIREMENT par ce recapitulatif exact :
 
-Pass Festival : XXX €
+Recapitulatif :
 
-💶 Prix total TTC : XXX €
+Transport : XXX EUR
 
-**IMPORTANT** : Le prix total doit être inférieur ou égal à {$request->budget} €. Si ce n'est pas possible, propose une version plus économique.
-EOT;
+Hebergement : XXX EUR
+
+Activites : XXX EUR
+
+Pass Festival : XXX EUR
+
+Prix total TTC : XXX EUR
+
+IMPORTANT : Le prix total doit etre inferieur ou egal a {$request->budget} EUR. Si ce n'est pas possible, propose une version plus economique.";
+
+        return $this->cleanTextForAI($prompt);
     }
 
     /**
@@ -178,7 +215,7 @@ EOT;
     {
         try {
             $messages = [
-                ['role' => 'system', 'content' => 'Tu es un assistant de voyage IA. Sois structuré, professionnel et convivial.'],
+                ['role' => 'system', 'content' => 'Tu es un assistant de voyage IA. Sois structure, professionnel et convivial.'],
             ];
 
             // OPTIMISATION : Limiter l'historique aux 3 dernières propositions
@@ -189,7 +226,7 @@ EOT;
                 ->get();
 
             foreach ($previousProposals as $proposal) {
-                // OPTIMISATION : Tronquer les contenus trop longs
+                // OPTIMISATION : Tronquer les contenus trop longs et nettoyer
                 $promptText = strlen($proposal->prompt_text) > 1000 
                     ? substr($proposal->prompt_text, 0, 1000) . '...' 
                     : $proposal->prompt_text;
@@ -200,30 +237,30 @@ EOT;
 
                 $messages[] = [
                     'role' => 'user',
-                    'content' => "Proposition précédente #{$proposal->id} :\n{$promptText}"
+                    'content' => "Proposition precedente #{$proposal->id} :\n" . $this->cleanTextForAI($promptText)
                 ];
 
                 $messages[] = [
                     'role' => 'assistant',
-                    'content' => $responseText
+                    'content' => $this->cleanTextForAI($responseText)
                 ];
 
                 if ($proposal->status === 'rejected' && $proposal->rejection_reason) {
                     $messages[] = [
                         'role' => 'user',
-                        'content' => "Cette proposition a été refusée. Motif : {$proposal->rejection_reason}"
+                        'content' => "Cette proposition a ete refusee. Motif : " . $this->cleanTextForAI($proposal->rejection_reason)
                     ];
                 }
             }
 
-            $messages[] = ['role' => 'user', 'content' => $prompt];
+            $messages[] = ['role' => 'user', 'content' => $this->cleanTextForAI($prompt)];
 
             // OPTIMISATION : Réduire la température pour des réponses plus rapides
             $response = $this->client->chat()->create([
                 'model' => 'gpt-4',
                 'messages' => $messages,
-                'temperature' => 0.5, // Réduire de 0.7 à 0.5
-                'max_tokens' => 2000, // Limiter la longueur de réponse
+                'temperature' => 0.5,
+                'max_tokens' => 2000,
             ]);
 
             return $response->choices[0]->message->content ?? null;
@@ -232,7 +269,7 @@ EOT;
             Log::error('Erreur lors de la communication avec l\'IA', [
                 'error' => $e->getMessage()
             ]);
-            return null;
+            throw $e;
         }
     }
 
@@ -244,7 +281,8 @@ EOT;
      */
     private function extractTotalPrice(string $aiResponse): float
     {
-        preg_match('/prix total.+?(\d+[.,]?\d*)\s*€?/i', $aiResponse, $matchesTotal);
+        // Modifier pour chercher "Prix total TTC" au lieu de "prix total" avec émoji
+        preg_match('/Prix total TTC\s*:\s*(\d+[.,]?\d*)\s*EUR/i', $aiResponse, $matchesTotal);
         return isset($matchesTotal[1]) ? (float) str_replace(',', '.', $matchesTotal[1]) : 0;
     }
 
@@ -257,12 +295,12 @@ EOT;
      */
     private function createProposalDetails(Proposal $proposal, string $aiResponse): void
     {
-        // Extraire le récapitulatif avec un regex flexible
-        if (preg_match('/Récapitulatif\s*:\s*\n\n(.*?)\n\n💶 Prix total TTC\s*:\s*(\d+[.,]?\d*)\s*€/is', $aiResponse, $recapMatches)) {
+        // Extraire le récapitulatif avec un regex flexible - sans émoji
+        if (preg_match('/Recapitulatif\s*:\s*\n\n(.*?)\n\nPrix total TTC\s*:\s*(\d+[.,]?\d*)\s*EUR/is', $aiResponse, $recapMatches)) {
             $recapContent = $recapMatches[1];
             
-            // Extraire chaque ligne du récapitulatif
-            preg_match_all('/([^:]+):\s*(\d+[.,]?\d*)\s*€/i', $recapContent, $recapLines, PREG_SET_ORDER);
+            // Extraire chaque ligne du récapitulatif - chercher EUR au lieu de €
+            preg_match_all('/([^:]+):\s*(\d+[.,]?\d*)\s*EUR/i', $recapContent, $recapLines, PREG_SET_ORDER);
             
             foreach ($recapLines as $line) {
                 $name = trim($line[1]);
@@ -279,21 +317,6 @@ EOT;
                 }
             }
         }
-    }
-
-    /**
-     * Formate une liste pour l'affichage
-     *
-     * @param mixed $value
-     * @return string
-     */
-    private function formatList($value): string
-    {
-        if (is_array($value)) {
-            return implode(', ', $value);
-        }
-
-        return trim(str_replace(['[', ']', '"'], '', $value));
     }
 
     /**
