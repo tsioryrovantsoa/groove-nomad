@@ -9,7 +9,7 @@
     $releases_dir = $base_dir . '/releases';
     $app_dir = $base_dir . '/current';
     $release = date('YmdHis');
-    $new_release_dir = $releases_dir . '/' . $release . '/' . 'groove-nomad';
+    $new_release_dir = $releases_dir . '/' . $release . '/' . 'groove-nomad/groove-nomad';
     $discord_webhook = env('DISCORD_WEBHOOK');
     $deployer = exec('whoami');
     $deployer_clean = str_replace('\\', '\\\\', $deployer);
