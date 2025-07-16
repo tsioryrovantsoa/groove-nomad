@@ -16,7 +16,7 @@ class RequestController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $requests = ModelsRequest::with('proposals')->where('user_id', $user->id)->latest()->paginate(5); // 5 par page (modifie à ton besoin)
+        $requests = ModelsRequest::with('proposals')->where('user_id', $user->id)->latest()->paginate(1); // 5 par page (modifie à ton besoin)
 
         return view('request.index', compact('requests'));
     }

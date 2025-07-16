@@ -24,6 +24,7 @@ return new class extends Migration
             $table->timestamp('email_read_at')->nullable();
             $table->text('rejection_reason')->nullable();
             $table->timestamps();
+            $table->index(['request_id', 'status', 'created_at'], 'proposals_request_status_created_index');
         });
     }
 
@@ -33,5 +34,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('proposals');
+        $table->dropIndex('proposals_request_status_created_index');
     }
 };

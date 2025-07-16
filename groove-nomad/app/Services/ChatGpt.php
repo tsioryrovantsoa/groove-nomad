@@ -186,25 +186,33 @@ EOT;
                 ['role' => 'system', 'content' => 'Tu es un assistant de voyage IA. Sois structuré, professionnel et convivial.'],
             ];
 
-            // Ajouter l'historique des conversations précédentes
+            // OPTIMISATION : Limiter l'historique aux 3 dernières propositions
             $previousProposals = $request->proposals()
                 ->whereIn('status', ['generated', 'rejected'])
+                ->limit(3)
                 ->orderBy('created_at', 'asc')
                 ->get();
 
             foreach ($previousProposals as $proposal) {
-                // Ajouter la proposition précédente comme contexte
+                // OPTIMISATION : Tronquer les contenus trop longs
+                $promptText = strlen($proposal->prompt_text) > 1000 
+                    ? substr($proposal->prompt_text, 0, 1000) . '...' 
+                    : $proposal->prompt_text;
+                    
+                $responseText = strlen($proposal->response_text) > 2000 
+                    ? substr($proposal->response_text, 0, 2000) . '...' 
+                    : $proposal->response_text;
+
                 $messages[] = [
                     'role' => 'user',
-                    'content' => "Proposition précédente #{$proposal->id} :\n{$proposal->prompt_text}"
+                    'content' => "Proposition précédente #{$proposal->id} :\n{$promptText}"
                 ];
 
                 $messages[] = [
                     'role' => 'assistant',
-                    'content' => $proposal->response_text
+                    'content' => $responseText
                 ];
 
-                // Si la proposition a été refusée, ajouter le feedback
                 if ($proposal->status === 'rejected' && $proposal->rejection_reason) {
                     $messages[] = [
                         'role' => 'user',
@@ -213,13 +221,14 @@ EOT;
                 }
             }
 
-            // Ajouter la nouvelle demande
             $messages[] = ['role' => 'user', 'content' => $prompt];
 
+            // OPTIMISATION : Réduire la température pour des réponses plus rapides
             $response = $this->client->chat()->create([
                 'model' => 'gpt-4',
                 'messages' => $messages,
-                'temperature' => 0.7,
+                'temperature' => 0.5, // Réduire de 0.7 à 0.5
+                'max_tokens' => 2000, // Limiter la longueur de réponse
             ]);
 
             return $response->choices[0]->message->content ?? null;
@@ -288,7 +297,9 @@ EOT;
      */
     public function findMatchingFestival(Request $request): ?Festival
     {
-        return Festival::where('region', $request->region)
+        // OPTIMISATION : Ajouter des index et optimiser la requête
+        return Festival::select('id', 'name', 'start_date', 'end_date', 'location', 'region', 'description')
+            ->where('region', $request->region)
             ->whereDate('start_date', '<=', $request->date_end)
             ->whereDate('end_date', '>=', $request->date_start)
             ->inRandomOrder()

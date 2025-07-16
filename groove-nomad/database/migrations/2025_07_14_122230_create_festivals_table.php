@@ -25,6 +25,8 @@ return new class extends Migration
             $table->unsignedInteger('page')->default(1);
             $table->string('region_abbr')->nullable();
             $table->timestamps();
+
+            $table->index(['region', 'start_date', 'end_date'], 'festivals_region_dates_index');
         });
     }
 
@@ -34,5 +36,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('festivals');
+        $table->dropIndex('festivals_region_dates_index');
     }
 };
