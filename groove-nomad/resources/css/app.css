@@ -8,3 +8,215 @@
 @import './owl.carousel.min.css';
 @import './slicknav.min.css';
 @import './style.css'; /* ton style principal */
+
+/* Styles pour les préférences utilisateur */
+.preferences-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 30px;
+    transition: all 0.3s ease;
+}
+
+.preferences-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+}
+
+.preferences-header {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.preferences-title {
+    color: white;
+}
+
+.preferences-title h3 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 10px 0 5px 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.preferences-title p {
+    font-size: 1.1rem;
+    margin: 0;
+    opacity: 0.9;
+}
+
+.preferences-title i {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.preferences-content {
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.preferences-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.preference-section {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.preference-section:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f8f9fa;
+}
+
+.section-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 1.3rem;
+    color: white;
+}
+
+.section-header h4 {
+    margin: 0;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1.2rem;
+}
+
+/* Icônes colorées pour chaque section */
+.preference-section:nth-child(1) .section-icon {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.preference-section:nth-child(2) .section-icon {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+}
+
+.preference-section:nth-child(3) .section-icon {
+    background: linear-gradient(135deg, #ffecd2, #fcb69f);
+}
+
+.preference-section:nth-child(4) .section-icon {
+    background: linear-gradient(135deg, #a8edea, #fed6e3);
+}
+
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag {
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border: none;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.tag:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.tag-music {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.tag-culture {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+}
+
+.tag-phobia {
+    background: linear-gradient(135deg, #ffecd2, #fcb69f);
+    color: #8b4513;
+}
+
+.tag-allergy {
+    background: linear-gradient(135deg, #a8edea, #fed6e3);
+    color: #2c3e50;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .preferences-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .preferences-title h3 {
+        font-size: 1.8rem;
+    }
+    
+    .preferences-content {
+        padding: 20px;
+    }
+    
+    .preference-section {
+        padding: 20px;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .section-icon {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
+
+/* Animation d'entrée */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.preferences-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.preference-section {
+    animation: fadeInUp 0.6s ease-out;
+    animation-delay: calc(var(--animation-order) * 0.1s);
+}
+
+.preference-section:nth-child(1) { --animation-order: 1; }
+.preference-section:nth-child(2) { --animation-order: 2; }
+.preference-section:nth-child(3) { --animation-order: 3; }
+.preference-section:nth-child(4) { --animation-order: 4; }

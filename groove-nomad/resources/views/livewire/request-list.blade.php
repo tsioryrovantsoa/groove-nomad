@@ -5,10 +5,6 @@
                 <div class="card-body">
                     <h5 class="mb-2">Demande #{{ $request->id }}</h5>
 
-                    <p><strong>Genres préférés :</strong>
-                        {{ !empty($request->genres) ? implode(', ', $request->genres) : 'Non précisé' }}
-                    </p>
-
                     <p><strong>Budget :</strong> {{ $request->budget ? $request->budget . ' €' : 'Non précisé' }}</p>
 
                     <p>
@@ -21,18 +17,6 @@
                     <p><strong>Région :</strong> {{ $request->region ?? 'Non précisée' }}</p>
                     <p><strong>Type d'aventure :</strong> {{ ucfirst($request->adventure_type) ?? 'Non précisé' }}</p>
                     <p><strong>Nombre de personnes :</strong> {{ $request->people_count ?? 'Non précisé' }}</p>
-
-                    <p><strong>Goûts culturels :</strong>
-                        {{ !empty($request->cultural_tastes) ? implode(', ', $request->cultural_tastes) : 'Non précisé' }}
-                    </p>
-
-                    <p><strong>Phobies :</strong>
-                        {{ !empty($request->phobias) ? implode(', ', $request->phobias) : 'Aucune' }}
-                    </p>
-
-                    <p><strong>Allergies :</strong>
-                        {{ !empty($request->allergies) ? implode(', ', $request->allergies) : 'Aucune' }}
-                    </p>
 
                     <p><strong>Statut :</strong> {{ ucfirst($request->status) }}</p>
 

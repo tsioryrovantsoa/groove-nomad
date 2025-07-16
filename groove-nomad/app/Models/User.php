@@ -55,4 +55,20 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Relation avec les préférences utilisateur
+     */
+    public function preferences()
+    {
+        return $this->hasOne(UserPreference::class);
+    }
+
+    /**
+     * Relation avec les demandes
+     */
+    public function requests()
+    {
+        return $this->hasMany(Request::class);
+    }
 }

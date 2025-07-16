@@ -17,7 +17,7 @@
                             <div class="form-group col-md-6">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="genres[]"
-                                        id="genre_{{ Str::slug($genre->name) }}" value="{{ $genre->name }}">
+                                        id="genre_{{ Str::slug($genre->name) }}" value="{{ $genre->id }}">
                                     <label class="form-check-label"
                                         for="genre_{{ Str::slug($genre->name) }}">{{ $genre->name }}</label>
                                 </div>
@@ -87,7 +87,7 @@
                             <div class="form-group col-md-6">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="interets[]"
-                                        id="{{ Str::slug($interet->name) }}" value="{{ $interet->name }}">
+                                        id="{{ Str::slug($interet->name) }}" value="{{ $interet->id }}">
                                     <label class="form-check-label"
                                         for="{{ Str::slug($interet->name) }}">{{ $interet->name }}</label>
                                 </div>
@@ -106,7 +106,7 @@
                                 <div class="form-group col-md-6">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="phobies[]"
-                                            id="{{ Str::slug($phobie->name) }}" value="{{ $phobie->description }}">
+                                            id="{{ Str::slug($phobie->name) }}" value="{{ $phobie->id }}">
                                         <label class="form-check-label"
                                             for="{{ Str::slug($phobie->name) }}">{{ $phobie->description }}</label>
                                     </div>
@@ -126,9 +126,9 @@
                                 <div class="form-group col-md-6">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="allergies[]"
-                                            id="{{ Str::slug($allergie) }}" value="{{ $allergie->name }}">
+                                            id="{{ Str::slug($allergie->name) }}" value="{{ $allergie->id }}">
                                         <label class="form-check-label"
-                                            for="{{ Str::slug($allergie) }}">{{ $allergie->name }}</label>
+                                            for="{{ Str::slug($allergie->name) }}">{{ $allergie->name }}</label>
                                     </div>
                                 </div>
                             @endforeach

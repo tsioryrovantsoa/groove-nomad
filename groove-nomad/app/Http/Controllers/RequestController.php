@@ -9,13 +9,19 @@ use App\Models\Festival;
 use App\Models\MusicGenre;
 use App\Models\Phobia;
 use App\Models\Request as ModelsRequest;
+use App\Models\UserPreference;
 use Illuminate\Http\Request;
 
 class RequestController extends Controller
 {
     public function index(Request $request)
     {
-        return view('request.index');
+        $user = $request->user();
+        $userPreferences = $user->preferences;
+        
+        return view('request.index', [
+            'userPreferences' => $userPreferences
+        ]);
     }
     public function create()
     {
@@ -42,7 +48,7 @@ class RequestController extends Controller
         $user = $request->user();
         $validated = $request->validate([
             'genres' => ['nullable', 'array'],
-            'genres.*' => ['string', 'max:100'],
+            'genres.*' => ['integer', 'exists:music_genres,id'],
 
             'budget' => ['required', 'integer', 'min:0'],
 
@@ -56,13 +62,13 @@ class RequestController extends Controller
             'nombre_personnes' => ['required', 'integer', 'min:1', 'max:20'],
 
             'interets' => ['nullable', 'array'],
-            'interets.*' => ['string', 'max:100'],
+            'interets.*' => ['integer', 'exists:cultural_tastes,id'],
 
             'phobies' => ['nullable', 'array'],
-            'phobies.*' => ['string', 'max:255'],
+            'phobies.*' => ['integer', 'exists:phobias,id'],
 
             'allergies' => ['nullable', 'array'],
-            'allergies.*' => ['string', 'max:100'],
+            'allergies.*' => ['integer', 'exists:allergies,id'],
         ]);
 
         $data = [
@@ -80,9 +86,32 @@ class RequestController extends Controller
             'status' => 'pending',
         ];
 
+        // Créer ou mettre à jour les préférences utilisateur
+        $userPreference = $user->preferences()->firstOrCreate();
+        
+        // Sauvegarder les genres musicaux
+        if (!empty($validated['genres'])) {
+            $userPreference->addMusicGenres($validated['genres']);
+        }
+        
+        // Sauvegarder les goûts culturels
+        if (!empty($validated['interets'])) {
+            $userPreference->addCulturalTastes($validated['interets']);
+        }
+        
+        // Sauvegarder les phobies
+        if (!empty($validated['phobies'])) {
+            $userPreference->addPhobias($validated['phobies']);
+        }
+        
+        // Sauvegarder les allergies
+        if (!empty($validated['allergies'])) {
+            $userPreference->addAllergies($validated['allergies']);
+        }
+
         $request = ModelsRequest::create($data);
 
-        GenerateProposalJob::dispatch($request);
+        // GenerateProposalJob::dispatch($request);
 
         return to_route('request.index')->with('success', 'Demande enregistrée avec succès.');
     }
