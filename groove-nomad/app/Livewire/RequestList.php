@@ -54,7 +54,9 @@ class RequestList extends Component
     {
         $user = auth()->user();
         
-        $requests = Request::with(['proposals'])
+        $requests = Request::with(['proposals' => function($query) {
+            $query->orderBy('created_at', 'asc'); // Tri par date de création croissante
+        }])
             ->where('user_id', $user->id)
             ->latest()
             ->paginate(1);
